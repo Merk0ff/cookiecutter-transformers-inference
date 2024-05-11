@@ -8,8 +8,37 @@
 ## Starting the project
 
 ```bash
-docker compose up --build -d
+chmod +x run_configuration.sh
 ```
+
+### Contanerized
+```bash
+./run_configuration.sh con up --build -d
+```
+
+### Local
+1. Run infra
+```bash
+./run_configuration.sh exp up --build -d
+```
+2. Change redis and minio host to localhost
+3. Create venv of service you need in src/worker or src/backend
+```bash
+python -m venv venv
+```
+4. Activate venv
+```bash
+source venv/bin/activate
+```
+5. Install poetry
+```bash
+pip install poetry
+```
+6. Install dependencies from both 
+```bash
+poetry install --with dev
+```
+7. Run app. See docker-compose.yml for more details.
 
 ## Accessing the project
 Application URL:
