@@ -3,6 +3,7 @@ from uuid import uuid4
 
 import redis.asyncio as redis
 from botocore.exceptions import EndpointConnectionError, NoCredentialsError
+from redis import exceptions as redis_exceptions
 
 from .s3 import global_s3_session
 
@@ -23,7 +24,7 @@ async def check_redis_connection():
         # Use the asynchronous Redis PING command
         response = await redis_client.ping()
         return response
-    except redis.exceptions.ConnectionError:
+    except redis_exceptions.ConnectionError:
         return False
 
 
