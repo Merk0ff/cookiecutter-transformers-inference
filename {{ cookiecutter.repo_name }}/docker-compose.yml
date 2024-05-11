@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:alpine
+    volumes:
+      - redis_volume:/data
+
+  minio:
+    image: minio/minio:latest
+    entrypoint: sh
+    command: -c 'mkdir -p /data/test && /usr/bin/minio server --console-address :9001 /data'
+    volumes:
+      - minio_volume:/data
+    ports:
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: "{{ cookiecutter.minio_root_user }}"
+      MINIO_ROOT_PASSWORD: "{{ cookiecutter.minio_root_password }}"
+    restart: on-failure
+
+  worker:
+    build:
+      context: ./src/worker
+      dockerfile: Dockerfile.cpu
+    command: poetry run celery -A apps.celery.celery_app worker --pool solo --loglevel=info --concurrency=1
+    volumes:
+      - model_volume:/root/.cache/
+    depends_on:
+      - redis
+    environment:
+      - TRANSFORMERS_CACHE=/root/.cache/
+      - HF_HOME=/root/.cache/
+      - CELERY_BROKER_URL={{ cookiecutter.redis_url }}
+      - CELERY_RESULT_BACKEND={{ cookiecutter.redis_url }}
+    restart: always
+
+  backend:
+    build:
+      context: ./src/backend
+      dockerfile: Dockerfile
+    command: poetry run uvicorn apps.app:app --host 0.0.0.0 --port 8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+    environment:
+      - CELERY_BROKER_URL={{ cookiecutter.redis_url }}
+      - CELERY_RESULT_BACKEND={{ cookiecutter.redis_url }}
+    restart: always
+
+volumes:
+  redis_volume:
+  model_volume:
+  minio_volume:

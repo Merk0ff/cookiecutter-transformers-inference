@@ -1,0 +1,14 @@
+{
+    "project_name": "project_name",
+    "repo_name": "{{ cookiecutter.project_name.lower().replace(' ', '_') }}",
+    "author_name": "Your name (or your organization/company/team)",
+    "description": "A short description of the project.",
+    "version": "0.1.0",
+    "s3_endpoint": "http://minio:9000",
+    "minio_root_user": "admin",
+    "minio_root_password": "{{ random_ascii_string(16) }}",
+    "redis_url": "redis://redis:6379/0",
+    "_copy_without_render": [
+        "*.html"
+    ]
+}
