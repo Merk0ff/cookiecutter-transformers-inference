@@ -1,6 +1,8 @@
 import aioboto3
 from botocore.config import Config
 
+from .settings import global_settings
+
 
 class S3Manager:
     def __init__(
@@ -32,7 +34,7 @@ class S3Manager:
 
 
 global_s3_session = S3Manager(
-    endpoint_url="{{ cookiecutter.s3_endpoint }}",
-    aws_access_key_id="{{ cookiecutter.minio_root_user }}",
-    aws_secret_access_key="{{ cookiecutter.minio_root_password }}",
+    endpoint_url=global_settings.s3_url,
+    aws_access_key_id=global_settings.s3_access_key,
+    aws_secret_access_key=global_settings.s3_secret_key,
 )

@@ -15,6 +15,8 @@ services:
       - HF_HOME=/root/.cache/
       - CELERY_BROKER_URL={{ cookiecutter.redis_url }}
       - CELERY_RESULT_BACKEND={{ cookiecutter.redis_url }}
+    env_file:
+      - ../.env.container
     restart: always
 
   backend:
@@ -29,6 +31,8 @@ services:
     environment:
       - CELERY_BROKER_URL={{ cookiecutter.redis_url }}
       - CELERY_RESULT_BACKEND={{ cookiecutter.redis_url }}
+    env_file:
+      - ../.env.container
     restart: always
 
 volumes:
